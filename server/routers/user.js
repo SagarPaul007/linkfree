@@ -1,25 +1,33 @@
-const express = require("express");
+const router = require("express").Router();
 const bcrypt = require("bcryptjs");
-const router = express.Router();
+const jwt = require("jsonwebtoken");
+
+// secret key
+const JWT = require("../util/variable");
 
 // user model
 const { User } = require("../models/user");
 const { Profile } = require("../models/profile");
 
-// register user and profile
+// register user and create a profile
 
 router.post("/api/register", async (req, res) => {
-  const password = req.body.password;
+  const { username, password, name, email } = req.body;
   const hashedPassword = await bcrypt.hash(password, 8);
-  const userObj = { ...req.body, password: hashedPassword };
 
   try {
-    const user = await new User(userObj);
-    const profile = await new Profile({ userId: user._id });
-    user.profileId = profile._id;
-    await profile.save();
-    await user.save();
-    res.send({ status: "Ok", message: "User and Profile created!" });
+    // checking if username is used
+    const user = await User.findOne({ username });
+    if (user)
+      return res.send({ status: "Error", message: "User already exists" });
+
+    // creating user
+    const savedUser = await User.create({ username, password: hashedPassword });
+    const userId = savedUser._id;
+    const profile = await Profile.create({ name, email, userId });
+    savedUser.profileId = profile._id;
+    savedUser.save();
+    res.send({ status: "Ok", message: "User saved successfully" });
   } catch (err) {
     res.send({ status: "Error", message: err.message });
   }
@@ -28,12 +36,26 @@ router.post("/api/register", async (req, res) => {
 // login
 
 router.post("/api/login", async (req, res) => {
-  const user = req.body;
-  res.send({ status: "Ok", response: user });
+  const { username, password } = req.body;
+  const user = await User.findOne({ username }).lean();
+  if (!user)
+    return res.send({
+      status: "Error",
+      message: "Invalid usename or password",
+    });
+  const match = await bcrypt.compare(password, user.password);
+  if (match) {
+    const token = jwt.sign({ id: user._id, username: user.username }, JWT);
+    res.send({ status: "Success", message: "Logged in successfully", token });
+  } else {
+    res.send({ status: "Error", message: "Invalid usename or password" });
+  }
 });
 
-// update user
+// update user (jwt verification required)
 
-// delete user and profile
+router.post("/api/update", (req, res) => {});
+
+// delete user and profile (jwt verification required)
 
 module.exports = router;
