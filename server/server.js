@@ -21,7 +21,11 @@ app.use(express.json());
 
 // Routes
 app.use("/api", userRouter);
-app.use(profileRouter);
+app.use("/profile", profileRouter);
+
+app.use("*", (req, res) => {
+  res.send("<h1>Server Error</h1>");
+});
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log("listening on port " + port));
