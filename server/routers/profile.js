@@ -1,14 +1,14 @@
 const router = require("express").Router();
 
 // jwt authentication
-const verify = require("../util/verify");
+const { profileVerify } = require("../util/verify");
 
 // model
 const { User } = require("../models/user");
 const { Profile } = require("../models/profile");
 
 // GET user and profile
-router.get("/:username", verify, (req, res) => {
+router.get("/:username", profileVerify, (req, res) => {
   const username = req.params.username;
   let permissions = false; // true if token matches with the user
 
