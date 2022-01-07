@@ -14,7 +14,7 @@ const {
 // register user and create a profile
 router.post("/register", registerUser);
 
-// login
+// login user
 router.post("/login", loginUser);
 
 // update user (jwt verification required)

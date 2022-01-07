@@ -23,6 +23,8 @@ const registerUser = async (req, res) => {
     // creating user
     const savedUser = await User.create({ username, password: hashedPassword });
     const userId = savedUser._id;
+
+    // creating profile
     const profile = await Profile.create({ name, email, userId });
     savedUser.profileId = profile._id;
     savedUser.save();
@@ -40,9 +42,11 @@ const loginUser = async (req, res) => {
       status: "Error",
       message: "Invalid usename",
     });
+
+  // checking password
   const match = await bcrypt.compare(password, user.password);
   if (match) {
-    const token = jwt.sign({ id: user._id }, JWT);
+    const token = jwt.sign({ id: user._id }, JWT); // jwt auth token
     res.send({ status: "Success", message: "Logged in successfully", token });
   } else {
     res.send({ status: "Error", message: "Invalid password" });
@@ -79,8 +83,10 @@ const deleteUser = async (req, res) => {
     const user = await User.findOne({ _id: userId });
     if (!user) return res.send({ status: "Error", message: "no user" });
 
+    // checking password
     const match = await bcrypt.compare(password, user.password);
     if (match) {
+      // if password matched remove user and profile
       const profile = await Profile.findOne({ _id: user.profileId });
       await user.remove();
       await profile.remove();
