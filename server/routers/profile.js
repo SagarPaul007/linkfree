@@ -1,7 +1,7 @@
 const router = require("express").Router();
 
 // jwt authentication
-const { profileVerify } = require("../util/verify");
+const { profileVerify, userVerify } = require("../util/verify");
 
 // model
 const { User } = require("../models/user");
@@ -38,5 +38,25 @@ router.get("/:username", profileVerify, (req, res) => {
 });
 
 // update profile
+
+router.post("/update", userVerify, async (req, res) => {
+  const data = req.body;
+
+  try {
+    // getting user
+    const user = await User.findOne({ _id: req.user.id });
+    if (!user) return res.send({ status: "Error", message: "User not found!" });
+
+    // getting user profile
+    const profile = await Profile.findOne({ _id: user.profileId });
+    if (!profile)
+      return res.send({ status: "Error", message: "Profile not found!" });
+
+    await profile.updateOne(data);
+    res.status(200).send({ status: "OK", message: "Profile updated" });
+  } catch (err) {
+    res.send({ status: "Error", message: err.message });
+  }
+});
 
 module.exports = router;
