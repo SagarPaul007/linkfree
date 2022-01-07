@@ -1,0 +1,49 @@
+:root {
+  --color-primary: rgb(0, 99, 102);
+  --color-secondary: rgb(38, 98, 98);
+}
+
+.register {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  form {
+    width: 500px;
+    border: 2px solid var(--color-primary);
+    border-radius: 10px;
+    padding: 20px;
+
+    .form-heading {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--color-secondary);
+    }
+
+    .form-control {
+      margin: 20px;
+      display: flex;
+      flex-direction: column;
+
+      label {
+        font-size: 20px;
+        margin-bottom: 5px;
+        color: var(--color-primary);
+      }
+
+      input {
+        font-size: 18px;
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid var(--color-secondary);
+        background-color: transparent;
+
+        &:focus {
+          outline-color: var(--color-primary);
+        }
+      }
+    }
+  }
+}
