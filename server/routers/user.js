@@ -79,4 +79,28 @@ router.post("/update", userVerify, async (req, res) => {
 
 // delete user and profile (jwt verification required)
 
+router.post("/delete", userVerify, async (req, res) => {
+  const { password } = req.body;
+  const userId = req.user?.id;
+
+  try {
+    const user = await User.findOne({ _id: userId });
+    if (!user) return res.send({ status: "Error", message: "no user" });
+
+    const match = await bcrypt.compare(password, user.password);
+    if (match) {
+      const profile = await Profile.findOne({ _id: user.profileId });
+      await user.remove();
+      await profile.remove();
+      res
+        .status(200)
+        .send({ status: "Ok", message: "User deleted successfully" });
+    } else {
+      res.status(401).send({ status: "Error", message: "Invalid password" });
+    }
+  } catch (err) {
+    res.send({ status: "Error", message: err.message });
+  }
+});
+
 module.exports = router;
