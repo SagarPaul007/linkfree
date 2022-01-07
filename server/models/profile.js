@@ -1,9 +1,13 @@
 const mongoose = require("mongoose");
 
 const profileSchema = new mongoose.Schema({
-  name: { type: "string", required: true },
-  email: { type: String, required: true },
-  hobbies: { type: [String] },
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  bio: { type: String },
+  skills: { type: [] },
+  projects: { type: [] },
+  socials: { type: [] },
+  hobbies: { type: [] },
 
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 });
