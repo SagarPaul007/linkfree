@@ -23,7 +23,7 @@
     }
 
     .form-control {
-      margin: 20px;
+      margin-bottom: 20px;
       display: flex;
       flex-direction: column;
 
@@ -44,6 +44,11 @@
           outline-color: var(--color-primary);
         }
       }
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 10px;
     }
   }
 }

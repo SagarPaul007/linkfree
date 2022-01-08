@@ -18,7 +18,7 @@ const registerUser = async (req, res) => {
     // checking if username is used
     const user = await User.findOne({ username });
     if (user)
-      return res.send({ status: "Error", message: "User already exists" });
+      return res.send({ status: "error", message: "User already exists" });
 
     // creating user
     const savedUser = await User.create({ username, password: hashedPassword });
@@ -28,9 +28,9 @@ const registerUser = async (req, res) => {
     const profile = await Profile.create({ name, email, userId });
     savedUser.profileId = profile._id;
     savedUser.save();
-    res.send({ status: "Ok", message: "User saved successfully" });
+    res.send({ status: "ok", message: "User saved successfully" });
   } catch (err) {
-    res.send({ status: "Error", message: err.message });
+    res.send({ status: "error", message: err.message });
   }
 };
 
@@ -39,7 +39,7 @@ const loginUser = async (req, res) => {
   const user = await User.findOne({ username }).lean();
   if (!user)
     return res.send({
-      status: "Error",
+      status: "error",
       message: "Invalid usename",
     });
 
@@ -47,9 +47,9 @@ const loginUser = async (req, res) => {
   const match = await bcrypt.compare(password, user.password);
   if (match) {
     const token = jwt.sign({ id: user._id }, JWT); // jwt auth token
-    res.send({ status: "Success", message: "Logged in successfully", token });
+    res.send({ status: "ok", message: "Logged in successfully", token });
   } else {
-    res.send({ status: "Error", message: "Invalid password" });
+    res.send({ status: "error", message: "Invalid password" });
   }
 };
 
@@ -60,7 +60,7 @@ const updateUser = async (req, res) => {
   try {
     const userId = req.user?.id;
     const user = await User.findOne({ _id: userId });
-    if (!user) return res.send({ status: "Error", message: "no user" });
+    if (!user) return res.send({ status: "error", message: "no user" });
 
     // updating data
     user.username = username;
@@ -69,9 +69,9 @@ const updateUser = async (req, res) => {
 
     res
       .status(200)
-      .send({ status: "Ok", message: "user updated successfully" });
+      .send({ status: "ok", message: "user updated successfully" });
   } catch (err) {
-    res.send({ status: "Error", message: err.message });
+    res.send({ status: "error", message: err.message });
   }
 };
 
@@ -81,7 +81,7 @@ const deleteUser = async (req, res) => {
 
   try {
     const user = await User.findOne({ _id: userId });
-    if (!user) return res.send({ status: "Error", message: "no user" });
+    if (!user) return res.send({ status: "error", message: "no user" });
 
     // checking password
     const match = await bcrypt.compare(password, user.password);
@@ -92,12 +92,12 @@ const deleteUser = async (req, res) => {
       await profile.remove();
       res
         .status(200)
-        .send({ status: "Ok", message: "User deleted successfully" });
+        .send({ status: "ok", message: "User deleted successfully" });
     } else {
-      res.status(401).send({ status: "Error", message: "Invalid password" });
+      res.status(401).send({ status: "error", message: "Invalid password" });
     }
   } catch (err) {
-    res.send({ status: "Error", message: err.message });
+    res.send({ status: "error", message: err.message });
   }
 };
 

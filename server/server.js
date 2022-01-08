@@ -1,7 +1,13 @@
 const express = require("express");
+const cors = require("cors");
 const mongoose = require("mongoose");
 
 const app = express();
+
+var corsOptions = {
+  origin: ["http://localhost:3000"],
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 
 // routers
 const userRouter = require("./routers/user");
@@ -17,6 +23,7 @@ mongoose.connect(
 );
 
 // Middlewares
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
